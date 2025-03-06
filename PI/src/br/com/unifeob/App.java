@@ -3,6 +3,9 @@ import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
+import br.com.unifeob.model.Cliente;
+import br.com.unifeob.model.Produto;
+
 public class App {
     private static final ArrayList<Cliente> clientes = new ArrayList<>();
     private static int contadorId = 1;
