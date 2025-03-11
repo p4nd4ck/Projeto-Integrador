@@ -3,6 +3,13 @@
 
 Este projeto é um sistema simples de gestão de dívidas de clientes, desenvolvido em Java. O sistema permite cadastrar clientes, adicionar dívidas, quitar dívidas, consultar e excluir clientes, além de gerar um extrato com o histórico de compras e pagamentos.
 
+# teste
+
+
+
+
+
+
 ## 📌 Funcionalidades
 
 1. **Cadastrar Cliente**: Permite o cadastro de um novo cliente com nome, contato, endereço, CPF, RG e data de nascimento.
