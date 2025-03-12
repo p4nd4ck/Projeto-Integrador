@@ -102,4 +102,9 @@ public class Cliente {
     public ArrayList<String> getDatasQuitacao() {
         return datasQuitacao;
     }
+
+    public void adicionarDivida(Divida divida2) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'adicionarDivida'");
+    }
 }
