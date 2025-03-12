@@ -1,5 +1,7 @@
 package br.com.unifeob.model;
 
+import java.util.Date;
+
 public class Quitacao {
     private double valor;
     private Date data;

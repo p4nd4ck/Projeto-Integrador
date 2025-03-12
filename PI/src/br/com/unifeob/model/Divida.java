@@ -1,5 +1,7 @@
 package br.com.unifeob.model;
 
+import java.util.Date;
+
 public class Divida {
     private double valor;
     private String descricao;
