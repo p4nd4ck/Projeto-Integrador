@@ -1,7 +1,10 @@
 package br.com.unifeob.model;
 
+<<<<<<< HEAD
 import java.util.Date;
 
+=======
+>>>>>>> 6d385a0 (Model & Service Add)
 public class Quitacao {
     private double valor;
     private Date data;
