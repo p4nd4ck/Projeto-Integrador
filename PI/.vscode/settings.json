@@ -1,0 +1,29 @@
+{
+    "sqltools.connections": [
+        {
+            "mysqlOptions": {
+                "authProtocol": "default",
+                "enableSsl": "Disabled"
+            },
+            "previewLimit": 50,
+            "server": "localhost",
+            "port": 3306,
+            "driver": "MySQL",
+            "database": "gestao_dividas",
+            "username": "root",
+            "name": "Projeto Integrador"
+        }
+    ],
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "java",
+            "name": "Launch App",
+            "request": "launch",
+            "mainClass": "App",
+            "classpath": [
+                "lib/mysql-connector-java-9.2.0.jar"
+            ]
+        }
+    ]
+}

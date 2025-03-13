@@ -1,4 +1,8 @@
-
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
@@ -9,8 +13,21 @@ import model.Produto;
 public class App {
     private static final ArrayList<Cliente> clientes = new ArrayList<>();
     private static int contadorId = 1;
+    private static Connection connection;
 
     public static void main(String[] args) {
+        try {
+            // Carregar o driver JDBC do MySQL
+            Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestao_dividas", "root", "root");
+        } catch (ClassNotFoundException e) {
+            System.out.println("Erro ao carregar o driver JDBC do MySQL: " + e.getMessage());
+            return;
+        } catch (SQLException e) {
+            System.out.println("Erro ao conectar ao banco de dados: " + e.getMessage());
+            return;
+        }
+
         Scanner scanner = new Scanner(System.in);
         int opcao;
 
@@ -61,32 +78,55 @@ public class App {
         System.out.print("Data de Nascimento: ");
         String dataNascimento = scanner.nextLine();
 
-        clientes.add(new Cliente(contadorId++, nome, contato, endereco, cpf, rg, dataNascimento));
-        System.out.println("Cliente cadastrado com sucesso!");
+        try {
+            String sql = "INSERT INTO clientes (id, nome, contato, endereco, cpf, rg, data_nascimento) VALUES (?, ?, ?, ?, ?, ?, ?)";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setInt(1, contadorId++);
+            stmt.setString(2, nome);
+            stmt.setString(3, contato);
+            stmt.setString(4, endereco);
+            stmt.setString(5, cpf);
+            stmt.setString(6, rg);
+            stmt.setString(7, dataNascimento);
+            stmt.executeUpdate();
+            System.out.println("Cliente cadastrado com sucesso!");
+        } catch (SQLException e) {
+            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
+        }
     }
 
     private static void consultarCliente(Scanner scanner) {
         System.out.print("Nome do Cliente: ");
         String nome = scanner.nextLine();
-        Cliente cliente = encontrarClientePorNome(nome);
-        if (cliente != null) {
-            System.out.println("Cliente encontrado:");
-            System.out.println("Nome: " + cliente.getNome());
-            System.out.println("Contato: " + cliente.getContato());
-            System.out.println("Endereço: " + cliente.getEndereco());
-            System.out.println("CPF: " + cliente.getCpf());
-            System.out.println("RG: " + cliente.getRg());
-            System.out.println("Data de Nascimento: " + cliente.getDataNascimento());
-            System.out.println("Dívida: " + cliente.getDivida());
-            System.out.println("Saldo com a loja: " + cliente.getSaldoComLoja());
+        try {
+            String sql = "SELECT * FROM clientes WHERE nome = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, nome);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("Cliente encontrado:");
+                System.out.println("Nome: " + rs.getString("nome"));
+                System.out.println("Contato: " + rs.getString("contato"));
+                System.out.println("Endereço: " + rs.getString("endereco"));
+                System.out.println("CPF: " + rs.getString("cpf"));
+                System.out.println("RG: " + rs.getString("rg"));
+                System.out.println("Data de Nascimento: " + rs.getString("data_nascimento"));
+                System.out.println("Dívida: " + rs.getDouble("divida"));
+                System.out.println("Saldo com a loja: " + rs.getDouble("saldo_com_loja"));
 
-            System.out.println("Produtos comprados:");
-            ArrayList<Produto> produtos = cliente.getProdutos();
-            for (Produto produto : produtos) {
-                System.out.println("Produto: " + produto.getNome() + " - Valor: " + produto.getValor());
+                System.out.println("Produtos comprados:");
+                String sqlProdutos = "SELECT * FROM produtos WHERE cliente_id = ?";
+                PreparedStatement stmtProdutos = connection.prepareStatement(sqlProdutos);
+                stmtProdutos.setInt(1, rs.getInt("id"));
+                ResultSet rsProdutos = stmtProdutos.executeQuery();
+                while (rsProdutos.next()) {
+                    System.out.println("Produto: " + rsProdutos.getString("nome_produto") + " - Valor: " + rsProdutos.getDouble("valor_produto"));
+                }
+            } else {
+                System.out.println("Cliente não encontrado.");
             }
-        } else {
-            System.out.println("Cliente não encontrado.");
+        } catch (SQLException e) {
+            System.out.println("Erro ao consultar cliente: " + e.getMessage());
         }
     }
 
@@ -113,7 +153,18 @@ public class App {
             String data = scanner.nextLine();
             Produto produto = new Produto(nomeProduto, valorProduto);
             cliente.adicionarDivida(produto, data);
-            System.out.println("Dívida adicionada com sucesso!");
+            try {
+                String sql = "INSERT INTO dividas (cliente_id, nome_produto, valor_produto, data) VALUES (?, ?, ?, ?)";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setInt(1, cliente.getId());
+                stmt.setString(2, nomeProduto);
+                stmt.setDouble(3, valorProduto);
+                stmt.setString(4, data);
+                stmt.executeUpdate();
+                System.out.println("Dívida adicionada com sucesso!");
+            } catch (SQLException e) {
+                System.out.println("Erro ao adicionar dívida: " + e.getMessage());
+            }
         } else {
             System.out.println("Cliente não encontrado.");
         }
@@ -130,7 +181,17 @@ public class App {
             System.out.print("Data da Quitação: ");
             String dataQuitacao = scanner.nextLine();
             cliente.quitarDivida(valor, dataQuitacao);
-            System.out.println("Dívida quitada com sucesso!");
+            try {
+                String sql = "UPDATE dividas SET quitada = 1, data_quitacao = ? WHERE cliente_id = ? AND valor = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, dataQuitacao);
+                stmt.setInt(2, cliente.getId());
+                stmt.setDouble(3, valor);
+                stmt.executeUpdate();
+                System.out.println("Dívida quitada com sucesso!");
+            } catch (SQLException e) {
+                System.out.println("Erro ao quitar dívida: " + e.getMessage());
+            }
         } else {
             System.out.println("Cliente não encontrado.");
         }
@@ -142,7 +203,15 @@ public class App {
         Cliente cliente = encontrarClientePorNome(nome);
         if (cliente != null) {
             clientes.remove(cliente);
-            System.out.println("Cliente excluído com sucesso!");
+            try {
+                String sql = "DELETE FROM clientes WHERE nome = ?";
+                PreparedStatement stmt = connection.prepareStatement(sql);
+                stmt.setString(1, nome);
+                stmt.executeUpdate();
+                System.out.println("Cliente excluído com sucesso!");
+            } catch (SQLException e) {
+                System.out.println("Erro ao excluir cliente: " + e.getMessage());
+            }
         } else {
             System.out.println("Cliente não encontrado.");
         }
@@ -151,28 +220,39 @@ public class App {
     private static void extratoCliente(Scanner scanner) {
         System.out.print("Nome do Cliente: ");
         String nome = scanner.nextLine();
-        Cliente cliente = encontrarClientePorNome(nome);
-        if (cliente != null) {
-            System.out.println("Extrato do Cliente:");
-            System.out.println("Nome: " + cliente.getNome());
-            System.out.println("Dívida Total: " + cliente.getDivida());
-            System.out.println("Saldo com a loja: " + cliente.getSaldoComLoja());
+        try {
+            String sql = "SELECT * FROM clientes WHERE nome = ?";
+            PreparedStatement stmt = connection.prepareStatement(sql);
+            stmt.setString(1, nome);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                System.out.println("Extrato do Cliente:");
+                System.out.println("Nome: " + rs.getString("nome"));
+                System.out.println("Dívida Total: " + rs.getDouble("divida"));
+                System.out.println("Saldo com a loja: " + rs.getDouble("saldo_com_loja"));
 
-            System.out.println("Produtos e Datas da Dívida:");
-            for (int i = 0; i < cliente.getProdutos().size(); i++) {
-                Produto produto = cliente.getProdutos().get(i);
-                String data = cliente.getDatasDivida().get(i);
-                System.out.println("Produto: " + produto.getNome() + " - Valor: " + produto.getValor() + " - Data: " + data);
-            }
+                System.out.println("Produtos e Datas da Dívida:");
+                String sqlProdutos = "SELECT * FROM dividas WHERE cliente_id = ?";
+                PreparedStatement stmtProdutos = connection.prepareStatement(sqlProdutos);
+                stmtProdutos.setInt(1, rs.getInt("id"));
+                ResultSet rsProdutos = stmtProdutos.executeQuery();
+                while (rsProdutos.next()) {
+                    System.out.println("Produto: " + rsProdutos.getString("nome_produto") + " - Valor: " + rsProdutos.getDouble("valor_produto") + " - Data: " + rsProdutos.getString("data"));
+                }
 
-            System.out.println("Valores Quitados:");
-            for (int i = 0; i < cliente.getValoresQuitados().size(); i++) {
-                double valorQuitado = cliente.getValoresQuitados().get(i);
-                String dataQuitacao = cliente.getDatasQuitacao().get(i);
-                System.out.println("Valor Quitado: " + valorQuitado + " - Data de Quitação: " + dataQuitacao);
+                System.out.println("Valores Quitados:");
+                String sqlQuitados = "SELECT * FROM dividas WHERE cliente_id = ? AND quitada = 1";
+                PreparedStatement stmtQuitados = connection.prepareStatement(sqlQuitados);
+                stmtQuitados.setInt(1, rs.getInt("id"));
+                ResultSet rsQuitados = stmtQuitados.executeQuery();
+                while (rsQuitados.next()) {
+                    System.out.println("Valor Quitado: " + rsQuitados.getDouble("valor_produto") + " - Data de Quitação: " + rsQuitados.getString("data_quitacao"));
+                }
+            } else {
+                System.out.println("Cliente não encontrado.");
             }
-        } else {
-            System.out.println("Cliente não encontrado.");
+        } catch (SQLException e) {
+            System.out.println("Erro ao consultar extrato do cliente: " + e.getMessage());
         }
     }
 }
