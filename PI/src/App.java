@@ -9,10 +9,10 @@ import java.util.Scanner;
 
 import model.Cliente;
 import model.Produto;
+import service.ClienteService;
 
 public class App {
     private static final ArrayList<Cliente> clientes = new ArrayList<>();
-    private static int contadorId = 1;
     private static Connection connection;
 
     public static void main(String[] args) {
@@ -46,7 +46,13 @@ public class App {
                 opcao = scanner.nextInt();
                 scanner.nextLine();
                 switch (opcao) {
-                    case 1 -> cadastrarCliente(scanner);
+                    case 1 -> {
+                        try {
+                            ClienteService.cadastrarCliente(scanner);
+                        } catch (SQLException e) {
+                            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
+                        }
+                    }
                     case 2 -> consultarCliente(scanner);
                     case 3 -> adicionarDivida(scanner);
                     case 4 -> quitarDivida(scanner);
@@ -64,36 +70,7 @@ public class App {
         scanner.close();
     }
 
-    private static void cadastrarCliente(Scanner scanner) {
-        System.out.print("Nome do Cliente: ");
-        String nome = scanner.nextLine();
-        System.out.print("Número para Contato: ");
-        String contato = scanner.nextLine();
-        System.out.print("Endereço: ");
-        String endereco = scanner.nextLine();
-        System.out.print("CPF: ");
-        String cpf = scanner.nextLine();
-        System.out.print("RG: ");
-        String rg = scanner.nextLine();
-        System.out.print("Data de Nascimento: ");
-        String dataNascimento = scanner.nextLine();
-
-        try {
-            String sql = "INSERT INTO clientes (id, nome, contato, endereco, cpf, rg, data_nascimento) VALUES (?, ?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setInt(1, contadorId++);
-            stmt.setString(2, nome);
-            stmt.setString(3, contato);
-            stmt.setString(4, endereco);
-            stmt.setString(5, cpf);
-            stmt.setString(6, rg);
-            stmt.setString(7, dataNascimento);
-            stmt.executeUpdate();
-            System.out.println("Cliente cadastrado com sucesso!");
-        } catch (SQLException e) {
-            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
-        }
-    }
+   
 
     private static void consultarCliente(Scanner scanner) {
         System.out.print("Nome do Cliente: ");
@@ -104,7 +81,9 @@ public class App {
             stmt.setString(1, nome);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                int clienteId = rs.getInt("id");
                 System.out.println("Cliente encontrado:");
+                System.out.println("ID: " + clienteId);
                 System.out.println("Nome: " + rs.getString("nome"));
                 System.out.println("Contato: " + rs.getString("contato"));
                 System.out.println("Endereço: " + rs.getString("endereco"));
@@ -113,14 +92,14 @@ public class App {
                 System.out.println("Data de Nascimento: " + rs.getString("data_nascimento"));
                 System.out.println("Dívida: " + rs.getDouble("divida"));
                 System.out.println("Saldo com a loja: " + rs.getDouble("saldo_com_loja"));
-
+                
                 System.out.println("Produtos comprados:");
                 String sqlProdutos = "SELECT * FROM produtos WHERE cliente_id = ?";
                 PreparedStatement stmtProdutos = connection.prepareStatement(sqlProdutos);
-                stmtProdutos.setInt(1, rs.getInt("id"));
+                stmtProdutos.setInt(1, clienteId);
                 ResultSet rsProdutos = stmtProdutos.executeQuery();
                 while (rsProdutos.next()) {
-                    System.out.println("Produto: " + rsProdutos.getString("nome_produto") + " - Valor: " + rsProdutos.getDouble("valor_produto"));
+                    System.out.println("Produto: " + rsProdutos.getString("nome") + " - Valor: " + rsProdutos.getDouble("valor"));
                 }
             } else {
                 System.out.println("Cliente não encontrado.");
@@ -226,7 +205,9 @@ public class App {
             stmt.setString(1, nome);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
+                int clienteId = rs.getInt("id");
                 System.out.println("Extrato do Cliente:");
+                System.out.println("ID: " + clienteId);
                 System.out.println("Nome: " + rs.getString("nome"));
                 System.out.println("Dívida Total: " + rs.getDouble("divida"));
                 System.out.println("Saldo com a loja: " + rs.getDouble("saldo_com_loja"));
@@ -234,7 +215,7 @@ public class App {
                 System.out.println("Produtos e Datas da Dívida:");
                 String sqlProdutos = "SELECT * FROM dividas WHERE cliente_id = ?";
                 PreparedStatement stmtProdutos = connection.prepareStatement(sqlProdutos);
-                stmtProdutos.setInt(1, rs.getInt("id"));
+                stmtProdutos.setInt(1, clienteId);
                 ResultSet rsProdutos = stmtProdutos.executeQuery();
                 while (rsProdutos.next()) {
                     System.out.println("Produto: " + rsProdutos.getString("nome_produto") + " - Valor: " + rsProdutos.getDouble("valor_produto") + " - Data: " + rsProdutos.getString("data"));
@@ -243,7 +224,7 @@ public class App {
                 System.out.println("Valores Quitados:");
                 String sqlQuitados = "SELECT * FROM dividas WHERE cliente_id = ? AND quitada = 1";
                 PreparedStatement stmtQuitados = connection.prepareStatement(sqlQuitados);
-                stmtQuitados.setInt(1, rs.getInt("id"));
+                stmtQuitados.setInt(1, clienteId);
                 ResultSet rsQuitados = stmtQuitados.executeQuery();
                 while (rsQuitados.next()) {
                     System.out.println("Valor Quitado: " + rsQuitados.getDouble("valor_produto") + " - Data de Quitação: " + rsQuitados.getString("data_quitacao"));
