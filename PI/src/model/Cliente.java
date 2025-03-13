@@ -1,4 +1,4 @@
-package br.com.unifeob.model;
+package model;
 import java.util.ArrayList;
 
 public class Cliente {
@@ -101,5 +101,24 @@ public class Cliente {
 
     public ArrayList<String> getDatasQuitacao() {
         return datasQuitacao;
+    }
+
+    public void adicionarDivida(Divida divida2) {
+        this.divida += divida2.getValor();
+        this.datasDivida.add(divida2.getData().toString());
+    }
+
+    public void quitarDivida(Quitacao quitacao) {
+        double valor = quitacao.getValor();
+        if (valor > divida) {
+            saldoComLoja += (valor - divida);  // Calcula o saldo excedente e adiciona ao saldo com a loja
+            divida = 0;  // A dívida é quitada
+        } else {
+            divida -= valor;
+        }
+
+        if (divida < 0) divida = 0;  // Impede que a dívida seja negativa
+        this.valoresQuitados.add(valor);
+        this.datasQuitacao.add(quitacao.getData().toString());
     }
 }

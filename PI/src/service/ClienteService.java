@@ -1,4 +1,4 @@
-package br.com.unifeob.service;
+package service;
 
 public class ClienteService {
 
