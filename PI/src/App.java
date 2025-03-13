@@ -9,6 +9,7 @@ import java.util.Scanner;
 
 import model.Cliente;
 import model.Produto;
+import service.ClienteService;
 
 public class App {
     private static final ArrayList<Cliente> clientes = new ArrayList<>();
@@ -45,7 +46,13 @@ public class App {
                 opcao = scanner.nextInt();
                 scanner.nextLine();
                 switch (opcao) {
-                    case 1 -> cadastrarCliente(scanner);
+                    case 1 -> {
+                        try {
+                            ClienteService.cadastrarCliente(scanner);
+                        } catch (SQLException e) {
+                            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
+                        }
+                    }
                     case 2 -> consultarCliente(scanner);
                     case 3 -> adicionarDivida(scanner);
                     case 4 -> quitarDivida(scanner);
@@ -63,35 +70,7 @@ public class App {
         scanner.close();
     }
 
-    private static void cadastrarCliente(Scanner scanner) {
-        System.out.print("Nome do Cliente: ");
-        String nome = scanner.nextLine();
-        System.out.print("Número para Contato: ");
-        String contato = scanner.nextLine();
-        System.out.print("Endereço: ");
-        String endereco = scanner.nextLine();
-        System.out.print("CPF: ");
-        String cpf = scanner.nextLine();
-        System.out.print("RG: ");
-        String rg = scanner.nextLine();
-        System.out.print("Data de Nascimento: ");
-        String dataNascimento = scanner.nextLine();
-
-        try {
-            String sql = "INSERT INTO clientes (nome, contato, endereco, cpf, rg, data_nascimento) VALUES (?, ?, ?, ?, ?, ?)";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setString(1, nome);
-            stmt.setString(2, contato);
-            stmt.setString(3, endereco);
-            stmt.setString(4, cpf);
-            stmt.setString(5, rg);
-            stmt.setString(6, dataNascimento);
-            stmt.executeUpdate();
-            System.out.println("Cliente cadastrado com sucesso!");
-        } catch (SQLException e) {
-            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
-        }
-    }
+   
 
     private static void consultarCliente(Scanner scanner) {
         System.out.print("Nome do Cliente: ");
