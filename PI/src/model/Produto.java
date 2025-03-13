@@ -1,4 +1,4 @@
-package br.com.unifeob.model;
+package model;
 // Arquivo: Produto.java
 public class Produto {
     private String nome;

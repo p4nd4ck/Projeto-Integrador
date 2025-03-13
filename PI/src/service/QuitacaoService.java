@@ -1,8 +1,9 @@
-package br.com.unifeob.service;
+package service;
 
-import br.com.unifeob.model.Cliente;
-import br.com.unifeob.model.Quitacao;
 import java.util.Date;
+
+import model.Cliente;
+import model.Quitacao;
 public class QuitacaoService {
     public void quitarDivida(Cliente cliente, double valor, Date data) {
         Quitacao quitacao = new Quitacao(valor, data);

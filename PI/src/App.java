@@ -1,10 +1,10 @@
-package br.com.unifeob;
+
 import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import br.com.unifeob.model.Cliente;
-import br.com.unifeob.model.Produto;
+import model.Cliente;
+import model.Produto;
 
 public class App {
     private static final ArrayList<Cliente> clientes = new ArrayList<>();

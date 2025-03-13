@@ -1,4 +1,4 @@
-package br.com.unifeob.model;
+package model;
 import java.util.ArrayList;
 
 public class Cliente {
