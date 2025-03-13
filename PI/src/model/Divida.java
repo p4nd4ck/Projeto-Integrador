@@ -1,10 +1,15 @@
 package model;
 
 import java.util.Date;
+
 public class Divida {
     private double valor;
     private String descricao;
     private Date data;
+
+    public Divida() {
+        // Construtor padrão
+    }
 
     public Divida(double valor, String descricao, Date data) {
         this.valor = valor;
@@ -34,5 +39,14 @@ public class Divida {
 
     public void setData(Date data) {
         this.data = data;
+    }
+
+    @Override
+    public String toString() {
+        return "Divida{" +
+                "valor=" + valor +
+                ", descricao='" + descricao + '\'' +
+                ", data=" + data +
+                '}';
     }
 }
