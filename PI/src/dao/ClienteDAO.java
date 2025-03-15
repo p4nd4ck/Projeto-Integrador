@@ -2,10 +2,10 @@ package dao;
 
 import java.sql.Connection;
 import java.sql.Date;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import model.Cliente;
@@ -46,9 +46,43 @@ public class ClienteDAO extends AbstractDAO {
             stmt.executeUpdate();
             closeResources(conn, stmt);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
+        } catch (Exception e) {
+            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
         }
         
+    }
+
+    public Cliente consultarCliente(String nome) {
+        Connection conn = getConnection();
+        String sql = "SELECT * FROM clientes WHERE nome = ?";
+        Cliente cliente = null;
+        try {
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, nome);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                int clienteId = rs.getInt("id");
+                nome =  rs.getString("nome");
+                String contato = rs.getString("contato");
+                String endereco = rs.getString("endereco");
+                String cpf = rs.getString("cpf");
+                String rg = rs.getString("rg");
+                LocalDate dataNascimento = rs.getDate("data_nascimento").toLocalDate();
+                //double divida = rs.getDouble("divida");
+                //double saldoLoja = rs.getDouble("saldo_com_loja");
+
+                cliente = new Cliente(clienteId, nome, contato, endereco, cpf, rg, dataNascimento);
+
+            } else {
+                System.out.println("Cliente não encontrado.");
+            }
+            closeResources(conn, stmt);
+        } catch (SQLException e) {
+            System.out.println("Erro ao consultar cliente: " + e.getMessage());
+        }
+
+        return cliente;
     }
 
     public Cliente consultarCliente(int id) {

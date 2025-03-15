@@ -1,5 +1,4 @@
 import java.sql.Connection;
-import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -14,22 +13,11 @@ import service.ClienteService;
 public class App {
     private static final ArrayList<Cliente> clientes = new ArrayList<>();
     private static Connection connection;
+    private ClienteService clienteService;
 
-    public static void main(String[] args) {
-        try {
-            // Carregar o driver JDBC do MySQL
-            //Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestao_dividas?useSSL=false", "root", "root");
-        } 
-        /*catch (ClassNotFoundException e) {
-            System.out.println("Erro ao carregar o driver JDBC do MySQL: " + e.getMessage());
-            return;
-        } */
-        catch (SQLException e) {
-            System.out.println("Erro ao conectar ao banco de dados: " + e.getMessage());
-            return;
-        }
-
+    public App() {
+        clienteService = new ClienteService();  
+        
         Scanner scanner = new Scanner(System.in);
         int opcao;
 
@@ -49,13 +37,11 @@ public class App {
                 scanner.nextLine();
                 switch (opcao) {
                     case 1 -> {
-                        try {
-                            ClienteService.cadastrarCliente(scanner);
-                        } catch (SQLException e) {
-                            System.out.println("Erro ao cadastrar cliente: " + e.getMessage());
-                        }
+                        clienteService.cadastrarCliente(scanner);                       
                     }
-                    case 2 -> consultarCliente(scanner);
+                    case 2 ->  {
+                        clienteService.consultarCliente(scanner);
+                    }
                     case 3 -> adicionarDivida(scanner);
                     case 4 -> quitarDivida(scanner);
                     case 5 -> excluirCliente(scanner);
@@ -70,6 +56,10 @@ public class App {
             }
         } while (opcao != 7);
         scanner.close();
+    }
+
+    public static void main(String[] args) {
+        new App();    
     }
 
    
