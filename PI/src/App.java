@@ -18,12 +18,14 @@ public class App {
     public static void main(String[] args) {
         try {
             // Carregar o driver JDBC do MySQL
-            Class.forName("com.mysql.cj.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestao_dividas", "root", "root");
-        } catch (ClassNotFoundException e) {
+            //Class.forName("com.mysql.cj.jdbc.Driver");
+            connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestao_dividas?useSSL=false", "root", "root");
+        } 
+        /*catch (ClassNotFoundException e) {
             System.out.println("Erro ao carregar o driver JDBC do MySQL: " + e.getMessage());
             return;
-        } catch (SQLException e) {
+        } */
+        catch (SQLException e) {
             System.out.println("Erro ao conectar ao banco de dados: " + e.getMessage());
             return;
         }

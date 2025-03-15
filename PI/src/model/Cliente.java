@@ -1,4 +1,5 @@
 package model;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class Cliente {
@@ -8,7 +9,7 @@ public class Cliente {
     private String endereco;
     private String cpf;
     private String rg;
-    private String dataNascimento;
+    private LocalDate dataNascimento;
     private double divida;
     private double saldoComLoja;  // Novo campo para armazenar saldo com a loja
     private ArrayList<Produto> produtos;
@@ -16,7 +17,7 @@ public class Cliente {
     private ArrayList<Double> valoresQuitados;
     private ArrayList<String> datasQuitacao;
 
-    public Cliente(int id, String nome, String contato, String endereco, String cpf, String rg, String dataNascimento) {
+    public Cliente(int id, String nome, String contato, String endereco, String cpf, String rg, LocalDate dataNascimento) {
         this.id = id;
         this.nome = nome;
         this.contato = contato;
@@ -56,7 +57,7 @@ public class Cliente {
         return rg;
     }
 
-    public String getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
