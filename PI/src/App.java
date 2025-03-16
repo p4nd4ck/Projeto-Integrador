@@ -42,9 +42,11 @@ public class App {
                     case 2 ->  {
                         clienteService.consultarCliente(scanner);
                     }
-                    case 3 -> adicionarDivida(scanner);
-                    case 4 -> quitarDivida(scanner);
-                    case 5 -> excluirCliente(scanner);
+                    // case 3 -> adicionarDivida(scanner);
+                    // case 4 -> quitarDivida(scanner);
+                    case 5 -> {
+                        clienteService.excluirCliente(scanner);
+                    }
                     case 6 -> extratoCliente(scanner);
                     case 7 -> System.out.println("Saindo...");
                     default -> System.out.println("Opção inválida!");
@@ -64,129 +66,109 @@ public class App {
 
    
 
-    private static void consultarCliente(Scanner scanner) {
-        System.out.print("Nome do Cliente: ");
-        String nome = scanner.nextLine();
-        try {
-            String sql = "SELECT * FROM clientes WHERE nome = ?";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setString(1, nome);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int clienteId = rs.getInt("id");
-                System.out.println("Cliente encontrado:");
-                System.out.println("ID: " + clienteId);
-                System.out.println("Nome: " + rs.getString("nome"));
-                System.out.println("Contato: " + rs.getString("contato"));
-                System.out.println("Endereço: " + rs.getString("endereco"));
-                System.out.println("CPF: " + rs.getString("cpf"));
-                System.out.println("RG: " + rs.getString("rg"));
-                System.out.println("Data de Nascimento: " + rs.getString("data_nascimento"));
-                System.out.println("Dívida: " + rs.getDouble("divida"));
-                System.out.println("Saldo com a loja: " + rs.getDouble("saldo_com_loja"));
+    // private static void consultarCliente(Scanner scanner) {
+    //     System.out.print("Nome do Cliente: ");
+    //     String nome = scanner.nextLine();
+    //     try {
+    //         String sql = "SELECT * FROM clientes WHERE nome = ?";
+    //         PreparedStatement stmt = connection.prepareStatement(sql);
+    //         stmt.setString(1, nome);
+    //         ResultSet rs = stmt.executeQuery();
+    //         if (rs.next()) {
+    //             int clienteId = rs.getInt("id");
+    //             System.out.println("Cliente encontrado:");
+    //             System.out.println("ID: " + clienteId);
+    //             System.out.println("Nome: " + rs.getString("nome"));
+    //             System.out.println("Contato: " + rs.getString("contato"));
+    //             System.out.println("Endereço: " + rs.getString("endereco"));
+    //             System.out.println("CPF: " + rs.getString("cpf"));
+    //             System.out.println("RG: " + rs.getString("rg"));
+    //             System.out.println("Data de Nascimento: " + rs.getString("data_nascimento"));
+    //             System.out.println("Dívida: " + rs.getDouble("divida"));
+    //             System.out.println("Saldo com a loja: " + rs.getDouble("saldo_com_loja"));
                 
-                System.out.println("Produtos comprados:");
-                String sqlProdutos = "SELECT * FROM produtos WHERE cliente_id = ?";
-                PreparedStatement stmtProdutos = connection.prepareStatement(sqlProdutos);
-                stmtProdutos.setInt(1, clienteId);
-                ResultSet rsProdutos = stmtProdutos.executeQuery();
-                while (rsProdutos.next()) {
-                    System.out.println("Produto: " + rsProdutos.getString("nome") + " - Valor: " + rsProdutos.getDouble("valor"));
-                }
-            } else {
-                System.out.println("Cliente não encontrado.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao consultar cliente: " + e.getMessage());
-        }
-    }
+    //             System.out.println("Produtos comprados:");
+    //             String sqlProdutos = "SELECT * FROM produtos WHERE cliente_id = ?";
+    //             PreparedStatement stmtProdutos = connection.prepareStatement(sqlProdutos);
+    //             stmtProdutos.setInt(1, clienteId);
+    //             ResultSet rsProdutos = stmtProdutos.executeQuery();
+    //             while (rsProdutos.next()) {
+    //                 System.out.println("Produto: " + rsProdutos.getString("nome") + " - Valor: " + rsProdutos.getDouble("valor"));
+    //             }
+    //         } else {
+    //             System.out.println("Cliente não encontrado.");
+    //         }
+    //     } catch (SQLException e) {
+    //         System.out.println("Erro ao consultar cliente: " + e.getMessage());
+    //     }
+    // }
 
-    private static Cliente encontrarClientePorNome(String nome) {
-        for (Cliente cliente : clientes) {
-            if (cliente.getNome().equalsIgnoreCase(nome)) {
-                return cliente;
-            }
-        }
-        return null;
-    }
+    // private static Cliente encontrarClientePorNome(String nome) {
+    //     for (Cliente cliente : clientes) {
+    //         if (cliente.getNome().equalsIgnoreCase(nome)) {
+    //             return cliente;
+    //         }
+    //     }
+    //     return null;
+    // }
 
-    private static void adicionarDivida(Scanner scanner) {
-        System.out.print("Nome do Cliente: ");
-        String nome = scanner.nextLine();
-        Cliente cliente = encontrarClientePorNome(nome);
-        if (cliente != null) {
-            System.out.print("Nome do Produto: ");
-            String nomeProduto = scanner.nextLine();
-            System.out.print("Valor do Produto: ");
-            double valorProduto = scanner.nextDouble();
-            scanner.nextLine();
-            System.out.print("Data da Dívida: ");
-            String data = scanner.nextLine();
-            Produto produto = new Produto(nomeProduto, valorProduto);
-            cliente.adicionarDivida(produto, data);
-            try {
-                String sql = "INSERT INTO dividas (cliente_id, nome_produto, valor_produto, data) VALUES (?, ?, ?, ?)";
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                stmt.setInt(1, cliente.getId());
-                stmt.setString(2, nomeProduto);
-                stmt.setDouble(3, valorProduto);
-                stmt.setString(4, data);
-                stmt.executeUpdate();
-                System.out.println("Dívida adicionada com sucesso!");
-            } catch (SQLException e) {
-                System.out.println("Erro ao adicionar dívida: " + e.getMessage());
-            }
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
+    // private static void adicionarDivida(Scanner scanner) {
+    //     System.out.print("Nome do Cliente: ");
+    //     String nome = scanner.nextLine();
+    //     Cliente cliente = encontrarClientePorNome(nome);
+    //     if (cliente != null) {
+    //         System.out.print("Nome do Produto: ");
+    //         String nomeProduto = scanner.nextLine();
+    //         System.out.print("Valor do Produto: ");
+    //         double valorProduto = scanner.nextDouble();
+    //         scanner.nextLine();
+    //         System.out.print("Data da Dívida: ");
+    //         String data = scanner.nextLine();
+    //         Produto produto = new Produto(nomeProduto, valorProduto);
+    //         cliente.adicionarDivida(produto, data);
+    //         try {
+    //             String sql = "INSERT INTO dividas (cliente_id, nome_produto, valor_produto, data) VALUES (?, ?, ?, ?)";
+    //             PreparedStatement stmt = connection.prepareStatement(sql);
+    //             stmt.setInt(1, cliente.getId());
+    //             stmt.setString(2, nomeProduto);
+    //             stmt.setDouble(3, valorProduto);
+    //             stmt.setString(4, data);
+    //             stmt.executeUpdate();
+    //             System.out.println("Dívida adicionada com sucesso!");
+    //         } catch (SQLException e) {
+    //             System.out.println("Erro ao adicionar dívida: " + e.getMessage());
+    //         }
+    //     } else {
+    //         System.out.println("Cliente não encontrado.");
+    //     }
+    // }
 
-    private static void quitarDivida(Scanner scanner) {
-        System.out.print("Nome do Cliente: ");
-        String nome = scanner.nextLine();
-        Cliente cliente = encontrarClientePorNome(nome);
-        if (cliente != null) {
-            System.out.print("Valor para Quitar Dívida: ");
-            double valor = scanner.nextDouble();
-            scanner.nextLine();
-            System.out.print("Data da Quitação: ");
-            String dataQuitacao = scanner.nextLine();
-            cliente.quitarDivida(valor, dataQuitacao);
-            try {
-                String sql = "UPDATE dividas SET quitada = 1, data_quitacao = ? WHERE cliente_id = ? AND valor = ?";
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                stmt.setString(1, dataQuitacao);
-                stmt.setInt(2, cliente.getId());
-                stmt.setDouble(3, valor);
-                stmt.executeUpdate();
-                System.out.println("Dívida quitada com sucesso!");
-            } catch (SQLException e) {
-                System.out.println("Erro ao quitar dívida: " + e.getMessage());
-            }
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
-
-    private static void excluirCliente(Scanner scanner) {
-        System.out.print("Nome do Cliente: ");
-        String nome = scanner.nextLine();
-        Cliente cliente = encontrarClientePorNome(nome);
-        if (cliente != null) {
-            clientes.remove(cliente);
-            try {
-                String sql = "DELETE FROM clientes WHERE nome = ?";
-                PreparedStatement stmt = connection.prepareStatement(sql);
-                stmt.setString(1, nome);
-                stmt.executeUpdate();
-                System.out.println("Cliente excluído com sucesso!");
-            } catch (SQLException e) {
-                System.out.println("Erro ao excluir cliente: " + e.getMessage());
-            }
-        } else {
-            System.out.println("Cliente não encontrado.");
-        }
-    }
+    // private static void quitarDivida(Scanner scanner) {
+    //     System.out.print("Nome do Cliente: ");
+    //     String nome = scanner.nextLine();
+    //     Cliente cliente = encontrarClientePorNome(nome);
+    //     if (cliente != null) {
+    //         System.out.print("Valor para Quitar Dívida: ");
+    //         double valor = scanner.nextDouble();
+    //         scanner.nextLine();
+    //         System.out.print("Data da Quitação: ");
+    //         String dataQuitacao = scanner.nextLine();
+    //         cliente.quitarDivida(valor, dataQuitacao);
+    //         try {
+    //             String sql = "UPDATE dividas SET quitada = 1, data_quitacao = ? WHERE cliente_id = ? AND valor = ?";
+    //             PreparedStatement stmt = connection.prepareStatement(sql);
+    //             stmt.setString(1, dataQuitacao);
+    //             stmt.setInt(2, cliente.getId());
+    //             stmt.setDouble(3, valor);
+    //             stmt.executeUpdate();
+    //             System.out.println("Dívida quitada com sucesso!");
+    //         } catch (SQLException e) {
+    //             System.out.println("Erro ao quitar dívida: " + e.getMessage());
+    //         }
+    //     } else {
+    //         System.out.println("Cliente não encontrado.");
+    //     }
+    // }
 
     private static void extratoCliente(Scanner scanner) {
         System.out.print("Nome do Cliente: ");

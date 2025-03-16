@@ -12,24 +12,6 @@ import model.Cliente;
 import model.Produto;
 
 public class ClienteDAO extends AbstractDAO {
-    // ...existing code...
-    
-
-    // private Connection connect() {
-    //     // Implement your connection logic here
-    //     // For example, using DriverManager to get a connection
-    //     Connection conn = null;
-    //     try {
-    //         // Replace with your database URL, username, and password
-    //         String url = "jdbc:your_database_url";
-    //         String user = "your_database_user";
-    //         String password = "your_database_password";
-    //         conn = DriverManager.getConnection(url, user, password);
-    //     } catch (SQLException e) {
-    //         System.out.println(e.getMessage());
-    //     }
-    //     return conn;
-    // }
 
     public void cadastrarCliente(Cliente cliente) {
         Connection conn = getConnection();
@@ -138,59 +120,73 @@ public class ClienteDAO extends AbstractDAO {
         } catch (SQLException e) {
             System.out.println(e.getMessage());
         }
-        return produtos;
+        return produtos;        
     }
 
-    public void adicionarDivida(int clienteId, Produto produto, String data) {
-        String sql = "INSERT INTO dividas (cliente_id, produto_id, data) VALUES (?, ?, ?)";
-        
+    public void excluirCliente(String nome) {
+        Connection conn = getConnection();
+        String sql = "DELETE FROM clientes WHERE nome = ?";
+
         try {
-            Connection conn = getConnection();
-            PreparedStatement pstmt  = conn.prepareStatement(sql);
-            pstmt.setInt(1, clienteId);
-            pstmt.setInt(2, produto.getId());
-            pstmt.setString(3, data);
-            pstmt.executeUpdate();
+            PreparedStatement stmt = conn.prepareStatement(sql);
+            stmt.setString(1, nome);
+            stmt.executeUpdate();
+            closeResources(conn, stmt);
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
+            System.out.println("Erro ao excluir cliente: " + e.getMessage());
         }
     }
 
-    public void quitarDivida(int clienteId, double valor, String dataQuitacao) {
-        String sql = "UPDATE clientes SET divida = divida - ? WHERE id = ?";
+    // public void adicionarDivida(int clienteId, Produto produto, String data) {
+    //     String sql = "INSERT INTO dividas (cliente_id, produto_id, data) VALUES (?, ?, ?)";
         
-        try {
-            Connection conn = getConnection();
-            PreparedStatement pstmt  = conn.prepareStatement(sql);
-            pstmt.setDouble(1, valor);
-            pstmt.setInt(2, clienteId);
-            pstmt.executeUpdate();
+    //     try {
+    //         Connection conn = getConnection();
+    //         PreparedStatement pstmt  = conn.prepareStatement(sql);
+    //         pstmt.setInt(1, clienteId);
+    //         pstmt.setInt(2, produto.getId());
+    //         pstmt.setString(3, data);
+    //         pstmt.executeUpdate();
+    //     } catch (SQLException e) {
+    //         System.out.println(e.getMessage());
+    //     }
+    // }
+
+    // public void quitarDivida(int clienteId, double valor, String dataQuitacao) {
+    //     String sql = "UPDATE clientes SET divida = divida - ? WHERE id = ?";
+        
+    //     try {
+    //         Connection conn = getConnection();
+    //         PreparedStatement pstmt  = conn.prepareStatement(sql);
+    //         pstmt.setDouble(1, valor);
+    //         pstmt.setInt(2, clienteId);
+    //         pstmt.executeUpdate();
             
-            // Adiciona a quitação ao histórico
-            String sqlHistorico = "INSERT INTO quitacoes (cliente_id, valor, data) VALUES (?, ?, ?)";
-            try (PreparedStatement pstmtHistorico = conn.prepareStatement(sqlHistorico)) {
-                pstmtHistorico.setInt(1, clienteId);
-                pstmtHistorico.setDouble(2, valor);
-                pstmtHistorico.setString(3, dataQuitacao);
-                pstmtHistorico.executeUpdate();
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+    //         // Adiciona a quitação ao histórico
+    //         String sqlHistorico = "INSERT INTO quitacoes (cliente_id, valor, data) VALUES (?, ?, ?)";
+    //         try (PreparedStatement pstmtHistorico = conn.prepareStatement(sqlHistorico)) {
+    //             pstmtHistorico.setInt(1, clienteId);
+    //             pstmtHistorico.setDouble(2, valor);
+    //             pstmtHistorico.setString(3, dataQuitacao);
+    //             pstmtHistorico.executeUpdate();
+    //         }
+    //     } catch (SQLException e) {
+    //         System.out.println(e.getMessage());
+    //     }
+    // }
 
-    public void excluirCliente(int clienteId) {
-        String sql = "DELETE FROM clientes WHERE id = ?";
+    // public void excluirCliente(int clienteId) {
+    //     String sql = "DELETE FROM clientes WHERE id = ?";
         
-        try {
-            Connection conn = getConnection();
-            PreparedStatement pstmt  = conn.prepareStatement(sql);
-            pstmt.setInt(1, clienteId);
-            pstmt.executeUpdate();
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-    }
+    //     try {
+    //         Connection conn = getConnection();
+    //         PreparedStatement pstmt  = conn.prepareStatement(sql);
+    //         pstmt.setInt(1, clienteId);
+    //         pstmt.executeUpdate();
+    //     } catch (SQLException e) {
+    //         System.out.println(e.getMessage());
+    //     }
+    // }
 
     // ...existing code...
 }

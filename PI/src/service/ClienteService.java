@@ -11,16 +11,6 @@ import model.Cliente;
 public class ClienteService {
     private ClienteDAO clienteDAO = new ClienteDAO();
 
-    // static {
-    //     try {
-    //         // Carregar o driver JDBC do MySQL
-    //         Class.forName("com.mysql.cj.jdbc.Driver");
-    //         connection = DriverManager.getConnection("jdbc:mysql://localhost:3306/gestao_dividas", "root", "root");
-    //     } catch (ClassNotFoundException | SQLException e) {
-    //         e.printStackTrace();
-    //     }
-    // }
-
     public void cadastrarCliente(Scanner scanner) {
         System.out.print("Nome: ");
         String nome = scanner.nextLine();
@@ -61,6 +51,12 @@ public class ClienteService {
         } else {
             System.out.println("Cliente não encontrado.");
         }
+    }
 
+    public void excluirCliente(Scanner scanner) {
+        System.out.print("Nome do Cliente: ");
+        String nome = scanner.nextLine();
+        clienteDAO.excluirCliente(nome);
+        System.out.println("Cliente excluído com sucesso!");
     }
 }
