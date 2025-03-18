@@ -35,9 +35,6 @@ CREATE TABLE IF NOT EXISTS dividas (
     cliente_id INT NOT NULL,
     produto_id INT NOT NULL,
     data DATE NOT NULL,
-    valor DECIMAL(10,2) NOT NULL,
-    quitada TINYINT(1) NOT NULL DEFAULT 0,
-    data_quitacao DATE NULL,
     FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE CASCADE,
     FOREIGN KEY (produto_id) REFERENCES produtos(id) ON DELETE CASCADE
 );
@@ -100,4 +97,3 @@ INSERT INTO produtos (nome, valor) VALUES ('Máquina de Gelo', 2500);
 INSERT INTO produtos (nome, valor) VALUES ('Moedor de Carne Elétrico', 1300);
 INSERT INTO produtos (nome, valor) VALUES ('Seladora a Vácuo', 900);
 INSERT INTO produtos (nome, valor) VALUES ('Máquina de Pão', 750);
-

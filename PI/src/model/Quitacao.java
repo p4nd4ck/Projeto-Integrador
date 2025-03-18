@@ -8,6 +8,9 @@ public class Quitacao {
     private LocalDate data;
     private Cliente cliente;
 
+    public Quitacao() {        
+    }
+
     public Quitacao(int id, double valor, LocalDate data, Cliente cliente) {
         this.id = id;
         this.valor = valor;

@@ -1,20 +1,16 @@
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
 import service.ClienteService;
 import service.DividaService;
 import service.ProdutoService;
+import service.QuitacaoService;
 
 public class App {
-    //private static final ArrayList<Cliente> clientes = new ArrayList<>();
-    private static Connection connection;
     private ClienteService clienteService;
     private DividaService dividaService;
     private ProdutoService produtoService;
+    private QuitacaoService quitacaoService;
 
     public App() {
         clienteService = new ClienteService();
@@ -29,7 +25,7 @@ public class App {
             System.out.println("1. Cadastrar Cliente");
             System.out.println("2. Consultar Cliente");
             System.out.println("3. Consultar Produtos");
-            System.out.println("4. Adicionar Dívida");
+            System.out.println("4. Adicionar Compra");
             System.out.println("5. Quitar Dívida");
             System.out.println("6. Excluir Cliente");
             System.out.println("7. Extrato do Cliente");
@@ -53,12 +49,14 @@ public class App {
                         dividaService.adicionarDivida(scanner);
                     }
                     case 5 -> {
-                        dividaService.quitarDivida(scanner);
+                        quitacaoService.quitarDivida(scanner);
                     }
                     case 6 -> {
                         clienteService.excluirCliente(scanner);
                     }
-                    case 7 -> extratoCliente(scanner);
+                    case 7 -> {
+                        clienteService.consultarExtratoCliente(scanner);
+                    }
                     case 8 -> System.out.println("Saindo...");
                     default -> System.out.println("Opção inválida!");
                 }
@@ -67,52 +65,11 @@ public class App {
                 scanner.nextLine();
                 opcao = 0;
             }
-        } while (opcao != 7);
+        } while (opcao != 8);
         scanner.close();
     }
 
     public static void main(String[] args) {
         new App();    
-    }
-
-    private static void extratoCliente(Scanner scanner) {
-        System.out.print("Nome do Cliente: ");
-        String nome = scanner.nextLine();
-        try {
-            String sql = "SELECT * FROM clientes WHERE nome = ?";
-            PreparedStatement stmt = connection.prepareStatement(sql);
-            stmt.setString(1, nome);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                int clienteId = rs.getInt("id");
-                System.out.println("Extrato do Cliente:");
-                System.out.println("ID: " + clienteId);
-                System.out.println("Nome: " + rs.getString("nome"));
-                System.out.println("Dívida Total: " + rs.getDouble("divida"));
-                System.out.println("Saldo com a loja: " + rs.getDouble("saldo_com_loja"));
-
-                System.out.println("Produtos e Datas da Dívida:");
-                String sqlProdutos = "SELECT * FROM dividas WHERE cliente_id = ?";
-                PreparedStatement stmtProdutos = connection.prepareStatement(sqlProdutos);
-                stmtProdutos.setInt(1, clienteId);
-                ResultSet rsProdutos = stmtProdutos.executeQuery();
-                while (rsProdutos.next()) {
-                    System.out.println("Produto: " + rsProdutos.getString("nome_produto") + " - Valor: " + rsProdutos.getDouble("valor_produto") + " - Data: " + rsProdutos.getString("data"));
-                }
-
-                System.out.println("Valores Quitados:");
-                String sqlQuitados = "SELECT * FROM dividas WHERE cliente_id = ? AND quitada = 1";
-                PreparedStatement stmtQuitados = connection.prepareStatement(sqlQuitados);
-                stmtQuitados.setInt(1, clienteId);
-                ResultSet rsQuitados = stmtQuitados.executeQuery();
-                while (rsQuitados.next()) {
-                    System.out.println("Valor Quitado: " + rsQuitados.getDouble("valor_produto") + " - Data de Quitação: " + rsQuitados.getString("data_quitacao"));
-                }
-            } else {
-                System.out.println("Cliente não encontrado.");
-            }
-        } catch (SQLException e) {
-            System.out.println("Erro ao consultar extrato do cliente: " + e.getMessage());
-        }
     }
 }

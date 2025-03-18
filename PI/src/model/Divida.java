@@ -4,17 +4,14 @@ import java.time.LocalDate;
 
 public class Divida {
     private int id;
-    private double valor;
     private LocalDate data;
     private Cliente cliente;
     private Produto produto;
 
     public Divida() {
-        // Construtor padrão
     }
 
-    public Divida(int id, double valor, LocalDate data, Cliente cliente, Produto produto) {
-        this.valor = valor;
+    public Divida(int id, LocalDate data, Cliente cliente, Produto produto) {
         this.data = data;
         this.cliente = cliente;
         this.produto = produto;
@@ -26,14 +23,6 @@ public class Divida {
 
     public void setId(int id) {
         this.id = id;
-    }
-
-    public double getValor() {
-        return valor;
-    }
-
-    public void setValor(double valor) {
-        this.valor = valor;
     }
 
     public LocalDate getData() {
@@ -63,8 +52,10 @@ public class Divida {
     @Override
     public String toString() {
         return "Divida{" +
-                "valor=" + valor +
                 ", data=" + data +
+                ", cliente=" + cliente.getNome() +
+                ", produto=" + produto.getNome() +
+                ", valor=" + produto.getValor() +
                 '}';
     }
 }

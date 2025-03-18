@@ -9,7 +9,9 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import model.Cliente;
+import model.Divida;
 import model.Produto;
+import model.Quitacao;
 
 public class ClienteDAO extends AbstractDAO {
 
@@ -51,9 +53,7 @@ public class ClienteDAO extends AbstractDAO {
                 String cpf = rs.getString("cpf");
                 String rg = rs.getString("rg");
                 LocalDate dataNascimento = rs.getDate("data_nascimento").toLocalDate();
-                //double divida = rs.getDouble("divida");
-                //double saldoLoja = rs.getDouble("saldo_com_loja");
-
+         
                 cliente = new Cliente(clienteId, nome, contato, endereco, cpf, rg, dataNascimento);
             }
             closeResources(conn, stmt);
@@ -64,126 +64,119 @@ public class ClienteDAO extends AbstractDAO {
         return cliente;
     }
 
-    public Cliente consultarCliente(int id) {
-        Cliente cliente = null;
-        String sql = "SELECT * FROM clientes WHERE id = ?";  // Certifique-se de que a coluna 'id' exista na tabela 'clientes'
-        
-        try {
-            Connection conn = getConnection();
-            PreparedStatement pstmt  = conn.prepareStatement(sql);
-            
-            pstmt.setInt(1, id);
-            ResultSet rs  = pstmt.executeQuery();
-            
-            if (rs.next()) {
-                // Supondo que o Cliente tenha um construtor que aceite esses parâmetros
-                cliente = new Cliente(
-                    rs.getInt("id"),
-                    rs.getString("nome"),
-                    rs.getString("contato"),
-                    rs.getString("endereco"),
-                    rs.getString("cpf"),
-                    rs.getString("rg"),
-                    rs.getDate("dataNascimento").toLocalDate()
-                );
-                closeResources(conn, pstmt, rs);
-                // Preencha outros campos conforme necessário
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return cliente;
-    }
-
-    public List<Produto> consultarProdutosComprados(int clienteId) {
-        List<Produto> produtos = new ArrayList<>();
-        String sql = "SELECT * FROM produtos WHERE cliente_id = ?";  // Certifique-se de que a coluna 'cliente_id' exista na tabela 'produtos'
-        
-        try {            
-            Connection conn = getConnection();
-            PreparedStatement pstmt  = conn.prepareStatement(sql);
-
-            pstmt.setInt(1, clienteId);
-            ResultSet rs  = pstmt.executeQuery();
-            
-            while (rs.next()) {
-                Produto produto = new Produto(
-                    rs.getInt("id"),
-                    rs.getString("nome"),
-                    rs.getDouble("valor")
-                );
-                produtos.add(produto);
-            }
-        } catch (SQLException e) {
-            System.out.println(e.getMessage());
-        }
-        return produtos;        
-    }
-
-    public void excluirCliente(String nome) {
+    public boolean excluirCliente(String nome) {
         Connection conn = getConnection();
         String sql = "DELETE FROM clientes WHERE nome = ?";
-
+        boolean deletado = false;
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
             stmt.setString(1, nome);
             stmt.executeUpdate();
             closeResources(conn, stmt);
+            deletado = true;
         } catch (SQLException e) {
             System.out.println("Erro ao excluir cliente: " + e.getMessage());
         }
+        return deletado;
     }
 
-    // public void adicionarDivida(int clienteId, Produto produto, String data) {
-    //     String sql = "INSERT INTO dividas (cliente_id, produto_id, data) VALUES (?, ?, ?)";
+    public Cliente gerarRelatorioCliente(String nome) {
+        Connection conn = getConnection();
         
-    //     try {
-    //         Connection conn = getConnection();
-    //         PreparedStatement pstmt  = conn.prepareStatement(sql);
-    //         pstmt.setInt(1, clienteId);
-    //         pstmt.setInt(2, produto.getId());
-    //         pstmt.setString(3, data);
-    //         pstmt.executeUpdate();
-    //     } catch (SQLException e) {
-    //         System.out.println(e.getMessage());
-    //     }
-    // }
-
-    // public void quitarDivida(int clienteId, double valor, String dataQuitacao) {
-    //     String sql = "UPDATE clientes SET divida = divida - ? WHERE id = ?";
+        // SQL Query - clientes, dividas, produtos
+        String sqlDividas = "SELECT c.id AS cliente_id, c.nome, c.contato, c.endereco, c.cpf, c.rg, c.data_nascimento, " +
+                            "d.id AS divida_id, d.data AS divida_data, " +
+                            "p.id AS produto_id, p.nome AS produto_nome, p.valor AS produto_valor " +
+                            "FROM clientes c " +
+                            "LEFT JOIN dividas d ON c.id = d.cliente_id " +
+                            "LEFT JOIN produtos p ON d.produto_id = p.id " +
+                            "WHERE c.nome = ? " +
+                            "ORDER BY d.data ASC";
         
-    //     try {
-    //         Connection conn = getConnection();
-    //         PreparedStatement pstmt  = conn.prepareStatement(sql);
-    //         pstmt.setDouble(1, valor);
-    //         pstmt.setInt(2, clienteId);
-    //         pstmt.executeUpdate();
+        // SQL Query clientes, quitacoes
+        String sqlQuitacoes = "SELECT c.id AS cliente_id, q.id AS quitacao_id, q.valor AS quitacao_valor, q.data AS quitacao_data " +
+                              "FROM clientes c " +
+                              "LEFT JOIN quitacoes q ON c.id = q.cliente_id " +
+                              "WHERE c.nome = ?";
+        
+        Cliente cliente = null;
+        List<Divida> dividas = new ArrayList<>();
+        List<Quitacao> quitacoes = new ArrayList<>();
+    
+        try {
+            //Dividas e Produtos
+            PreparedStatement stmtDividas = conn.prepareStatement(sqlDividas);
+            stmtDividas.setString(1, nome);
+            ResultSet rsDividas = stmtDividas.executeQuery();
+    
+            while (rsDividas.next()) {
+                if (cliente == null) {
+                    cliente = new Cliente();
+                    cliente.setId(rsDividas.getInt("cliente_id"));
+                    cliente.setNome(rsDividas.getString("nome"));
+                    cliente.setContato(rsDividas.getString("contato"));
+                    cliente.setEndereco(rsDividas.getString("endereco"));
+                    cliente.setCpf(rsDividas.getString("cpf"));
+                    cliente.setRg(rsDividas.getString("rg"));
+                    cliente.setDataNascimento(rsDividas.getDate("data_nascimento").toLocalDate());
+                }
+    
+                int dividaId = rsDividas.getInt("divida_id");
+                if (dividaId > 0) {
+                    Divida divida = new Divida();
+                    divida.setId(dividaId);
+                    divida.setData(rsDividas.getDate("divida_data").toLocalDate());
+                    
+                    Produto produto = new Produto();
+                    produto.setId(rsDividas.getInt("produto_id"));
+                    produto.setNome(rsDividas.getString("produto_nome"));
+                    produto.setValor(rsDividas.getDouble("produto_valor"));
+                    divida.setProduto(produto);
+    
+                    dividas.add(divida);
+                }
+            }
+    
+            //Quitacoes
+            PreparedStatement stmtQuitacoes = conn.prepareStatement(sqlQuitacoes);
+            stmtQuitacoes.setString(1, nome);
+            ResultSet rsQuitacoes = stmtQuitacoes.executeQuery();
+    
+            while (rsQuitacoes.next()) {
+                if (cliente == null) {
+                    cliente = new Cliente();
+                    cliente.setId(rsQuitacoes.getInt("cliente_id"));
+                    cliente.setNome(rsQuitacoes.getString("nome"));
+                }
+    
+                int quitacaoId = rsQuitacoes.getInt("quitacao_id");
+                if (quitacaoId > 0) {
+                    Quitacao quitacao = new Quitacao();
+                    quitacao.setId(quitacaoId);
+                    quitacao.setValor(rsQuitacoes.getDouble("quitacao_valor"));
+                    quitacao.setData(rsQuitacoes.getDate("quitacao_data").toLocalDate());
+    
+                    quitacoes.add(quitacao);
+                }
+            }
+    
+            if (cliente != null) {
+                cliente.setDividas(dividas);
+                cliente.setQuitacoes(quitacoes);
+            }
+    
+            //Calcular dívida ou saldo
+            double totalDividas = cliente.getDividas().stream().mapToDouble(divida -> divida.getProduto().getValor()).sum();
+            double totalQuitacoes = cliente.getQuitacoes().stream().mapToDouble(Quitacao::getValor).sum();
+            cliente.setDividaOuSaldo(totalQuitacoes - totalDividas);
+    
+            closeResources(conn, stmtDividas, rsDividas);
+            closeResources(conn, stmtQuitacoes, rsQuitacoes);
             
-    //         // Adiciona a quitação ao histórico
-    //         String sqlHistorico = "INSERT INTO quitacoes (cliente_id, valor, data) VALUES (?, ?, ?)";
-    //         try (PreparedStatement pstmtHistorico = conn.prepareStatement(sqlHistorico)) {
-    //             pstmtHistorico.setInt(1, clienteId);
-    //             pstmtHistorico.setDouble(2, valor);
-    //             pstmtHistorico.setString(3, dataQuitacao);
-    //             pstmtHistorico.executeUpdate();
-    //         }
-    //     } catch (SQLException e) {
-    //         System.out.println(e.getMessage());
-    //     }
-    // }
-
-    // public void excluirCliente(int clienteId) {
-    //     String sql = "DELETE FROM clientes WHERE id = ?";
-        
-    //     try {
-    //         Connection conn = getConnection();
-    //         PreparedStatement pstmt  = conn.prepareStatement(sql);
-    //         pstmt.setInt(1, clienteId);
-    //         pstmt.executeUpdate();
-    //     } catch (SQLException e) {
-    //         System.out.println(e.getMessage());
-    //     }
-    // }
-
-    // ...existing code...
+        } catch (SQLException e) {
+            System.out.println("Erro ao gerar relatório do cliente: " + e.getMessage());
+        }
+    
+        return cliente;
+    }
 }

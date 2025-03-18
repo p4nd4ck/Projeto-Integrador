@@ -1,6 +1,7 @@
 package model;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.List;
 
 public class Cliente {
     private int id;
@@ -10,11 +11,12 @@ public class Cliente {
     private String cpf;
     private String rg;
     private LocalDate dataNascimento;
-    private double divida;
-    private double saldoComLoja;  // Novo campo para armazenar saldo com a loja
-    private ArrayList<Produto> produtos;
-    private ArrayList<String> datasDivida;
-    //private ArrayList<Quitacao> quitacoes;
+    private List<Quitacao> quitacoes;
+    private List<Divida> dividas;
+    private double dividaOuSaldo;
+
+    public Cliente() {
+    }
 
     public Cliente(int id, String nome, String contato, String endereco, String cpf, String rg, LocalDate dataNascimento) {
         this.id = id;
@@ -24,101 +26,89 @@ public class Cliente {
         this.cpf = cpf;
         this.rg = rg;
         this.dataNascimento = dataNascimento;
-        this.produtos = new ArrayList<>();
-        this.datasDivida = new ArrayList<>();
-        this.divida = 0.0;
-        // this.saldoComLoja = 0.0;  // Inicializa o saldo com a loja
-        // this.valoresQuitados = new ArrayList<>();
-        // this.datasQuitacao = new ArrayList<>();
-    }
-
-    public String getNome() {
-        return nome;
+        this.quitacoes = new ArrayList<>();
+        this.dividas = new ArrayList<>();
+        this.dividaOuSaldo = 0.0;
     }
 
     public int getId() {
         return id;
     }
 
+    public void setId(int id) {
+        this.id = id;
+    }
+
+    public String getNome() {
+        return nome;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
+    }
+
     public String getContato() {
         return contato;
+    }
+
+    public void setContato(String contato) {
+        this.contato = contato;
     }
 
     public String getEndereco() {
         return endereco;
     }
 
+    public void setEndereco(String endereco) {
+        this.endereco = endereco;
+    }
+
     public String getCpf() {
         return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     public String getRg() {
         return rg;
     }
 
+    public void setRg(String rg) {
+        this.rg = rg;
+    }
+
     public LocalDate getDataNascimento() {
         return dataNascimento;
     }
 
-    public void adicionarDivida(Produto produto, String data) {
-        this.produtos.add(produto);
-        this.datasDivida.add(data);
-        this.divida += produto.getValor();
+    public void setDataNascimento(LocalDate dataNascimento) {
+        this.dataNascimento = dataNascimento;
     }
 
-    public void quitarDivida(double valor, String dataQuitacao) {
-        if (valor > divida) {
-            saldoComLoja += (valor - divida);  // Calcula o saldo excedente e adiciona ao saldo com a loja
-            divida = 0;  // A dívida é quitada
-        } else {
-            divida -= valor;
-        }
-
-        if (divida < 0) divida = 0;  // Impede que a dívida seja negativa
-        // this.valoresQuitados.add(valor);
-        // this.datasQuitacao.add(dataQuitacao);
+    public List<Quitacao> getQuitacoes() {
+        return quitacoes;
     }
 
-    public double getDivida() {
-        return divida;
+    public void setQuitacoes(List<Quitacao> quitacoes) {
+        this.quitacoes = quitacoes;
     }
 
-    public double getSaldoComLoja() {
-        return saldoComLoja;
+    public List<Divida> getDividas() {
+        return dividas;
     }
 
-    public ArrayList<Produto> getProdutos() {
-        return produtos;
+    public void setDividas(List<Divida> dividas) {
+        this.dividas = dividas;
     }
 
-    public ArrayList<String> getDatasDivida() {
-        return datasDivida;
+    public double getDividaOuSaldo() {
+        return dividaOuSaldo;
     }
 
-    // public ArrayList<Double> getValoresQuitados() {
-    //     return valoresQuitados;
-    // }
-
-    // public ArrayList<String> getDatasQuitacao() {
-    //     return datasQuitacao;
-    // }
-
-    public void adicionarDivida(Divida divida2) {
-        this.divida += divida2.getValor();
-        this.datasDivida.add(divida2.getData().toString());
+    public void setDividaOuSaldo(double dividaOuSaldo) {
+        this.dividaOuSaldo = dividaOuSaldo;
     }
-
-    public void quitarDivida(Quitacao quitacao) {
-        double valor = quitacao.getValor();
-        if (valor > divida) {
-            saldoComLoja += (valor - divida);  // Calcula o saldo excedente e adiciona ao saldo com a loja
-            divida = 0;  // A dívida é quitada
-        } else {
-            divida -= valor;
-        }
-
-        if (divida < 0) divida = 0;  // Impede que a dívida seja negativa
-        // this.valoresQuitados.add(valor);
-        // this.datasQuitacao.add(quitacao.getData().toString());
-    }
+    
 }

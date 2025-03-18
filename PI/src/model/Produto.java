@@ -6,8 +6,7 @@ public class Produto {
     private String nome;
     private double valor;
 
-    public Produto() {
-        
+    public Produto() {        
     }
 
     // Construtor que aceita os parâmetros (int id, String nome, double valor)
