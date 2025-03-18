@@ -38,7 +38,6 @@ public class ClienteService {
         Cliente cliente = clienteDAO.consultarCliente(nome);
         if (cliente != null) {
             System.out.println("Cliente encontrado:");
-            System.out.println("Cliente encontrado:");
             System.out.println("ID: " + cliente.getId());
             System.out.println("Nome: " + cliente.getNome());
             System.out.println("Contato: " + cliente.getContato());

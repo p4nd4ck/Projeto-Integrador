@@ -23,10 +23,7 @@ public class ProdutoDAO extends AbstractDAO {
                 produto.setId(rs.getInt("id"));
                 produto.setNome(rs.getString("nome"));
                 produto.setValor(rs.getDouble("valor")); 
-            } else {
-                System.out.println("Produto não encontrado.");
             }
-
             closeResources(conn, stmt, rs);
         } catch (SQLException e) {
             System.out.println("Erro ao consultar produto: " + e.getMessage());

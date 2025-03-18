@@ -55,9 +55,6 @@ public class ClienteDAO extends AbstractDAO {
                 //double saldoLoja = rs.getDouble("saldo_com_loja");
 
                 cliente = new Cliente(clienteId, nome, contato, endereco, cpf, rg, dataNascimento);
-
-            } else {
-                System.out.println("Cliente não encontrado.");
             }
             closeResources(conn, stmt);
         } catch (SQLException e) {

@@ -36,9 +36,17 @@ public class DividaService {
         LocalDate data = LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
 
         Cliente cliente = clienteDAO.consultarCliente(nome);
+        if (cliente == null) {
+            System.out.println("Cliente não encontrato.");
+            return;
+        }
         Produto produto = produtoDAO.consultarProduto(nomeProduto);
-        Divida divida = new Divida(0, valorProduto, data, cliente, produto);
+        if (produto == null) {
+            System.out.println("Produto não encontrato.");
+            return;
+        }
 
+        Divida divida = new Divida(0, valorProduto, data, cliente, produto);
         dividaDAO.adicionarDivida(divida);
         System.out.println("Dívida adicionada com sucesso!");
     }
