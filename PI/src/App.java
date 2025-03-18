@@ -16,6 +16,7 @@ public class App {
         clienteService = new ClienteService();
         dividaService = new DividaService();
         produtoService = new ProdutoService();
+        quitacaoService = new QuitacaoService();
         
         Scanner scanner = new Scanner(System.in);
         int opcao;
