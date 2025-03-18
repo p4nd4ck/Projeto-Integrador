@@ -61,6 +61,10 @@ public class DividaService {
         LocalDate dataQuitacao = LocalDate.parse(scanner.nextLine(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         
         Cliente cliente = clienteDAO.consultarCliente(nome);
+        if (cliente == null) {
+            System.out.println("Cliente não encontrato.");
+            return;
+        }
         
         Divida divida = new Divida(0, valor, dataQuitacao, cliente, null);
         dividaDAO.quitarDivida(divida);

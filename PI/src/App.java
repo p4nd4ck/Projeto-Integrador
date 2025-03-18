@@ -7,16 +7,19 @@ import java.util.Scanner;
 
 import service.ClienteService;
 import service.DividaService;
+import service.ProdutoService;
 
 public class App {
     //private static final ArrayList<Cliente> clientes = new ArrayList<>();
     private static Connection connection;
     private ClienteService clienteService;
     private DividaService dividaService;
+    private ProdutoService produtoService;
 
     public App() {
         clienteService = new ClienteService();
         dividaService = new DividaService();
+        produtoService = new ProdutoService();
         
         Scanner scanner = new Scanner(System.in);
         int opcao;
@@ -25,11 +28,12 @@ public class App {
             System.out.println("\n=== Sistema de Gestão de Dívidas ===");
             System.out.println("1. Cadastrar Cliente");
             System.out.println("2. Consultar Cliente");
-            System.out.println("3. Adicionar Dívida");
-            System.out.println("4. Quitar Dívida");
-            System.out.println("5. Excluir Cliente");
-            System.out.println("6. Extrato do Cliente");
-            System.out.println("7. Sair");
+            System.out.println("3. Consultar Produtos");
+            System.out.println("4. Adicionar Dívida");
+            System.out.println("5. Quitar Dívida");
+            System.out.println("6. Excluir Cliente");
+            System.out.println("7. Extrato do Cliente");
+            System.out.println("8. Sair");
             System.out.print("Escolha uma opção: ");
 
             try {
@@ -43,16 +47,19 @@ public class App {
                         clienteService.consultarCliente(scanner);
                     }
                     case 3 -> {
-                        dividaService.adicionarDivida(scanner);
+                        produtoService.consultarProdutos();
                     }
                     case 4 -> {
-                        dividaService.quitarDivida(scanner);
+                        dividaService.adicionarDivida(scanner);
                     }
                     case 5 -> {
+                        dividaService.quitarDivida(scanner);
+                    }
+                    case 6 -> {
                         clienteService.excluirCliente(scanner);
                     }
-                    case 6 -> extratoCliente(scanner);
-                    case 7 -> System.out.println("Saindo...");
+                    case 7 -> extratoCliente(scanner);
+                    case 8 -> System.out.println("Saindo...");
                     default -> System.out.println("Opção inválida!");
                 }
             } catch (InputMismatchException e) {

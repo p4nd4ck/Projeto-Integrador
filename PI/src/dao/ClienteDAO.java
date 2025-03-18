@@ -37,11 +37,11 @@ public class ClienteDAO extends AbstractDAO {
 
     public Cliente consultarCliente(String nome) {
         Connection conn = getConnection();
-        String sql = "SELECT * FROM clientes WHERE nome = ?";
+        String sql = "SELECT * FROM clientes WHERE nome LIKE ?";
         Cliente cliente = null;
         try {
             PreparedStatement stmt = conn.prepareStatement(sql);
-            stmt.setString(1, nome);
+            stmt.setString(1, "%" + nome + "%");
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 int clienteId = rs.getInt("id");
