@@ -2,21 +2,21 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.InputMismatchException;
 import java.util.Scanner;
 
-import model.Cliente;
-import model.Produto;
 import service.ClienteService;
+import service.DividaService;
 
 public class App {
-    private static final ArrayList<Cliente> clientes = new ArrayList<>();
+    //private static final ArrayList<Cliente> clientes = new ArrayList<>();
     private static Connection connection;
     private ClienteService clienteService;
+    private DividaService dividaService;
 
     public App() {
-        clienteService = new ClienteService();  
+        clienteService = new ClienteService();
+        dividaService = new DividaService();
         
         Scanner scanner = new Scanner(System.in);
         int opcao;
@@ -42,8 +42,12 @@ public class App {
                     case 2 ->  {
                         clienteService.consultarCliente(scanner);
                     }
-                    // case 3 -> adicionarDivida(scanner);
-                    // case 4 -> quitarDivida(scanner);
+                    case 3 -> {
+                        dividaService.adicionarDivida(scanner);
+                    }
+                    case 4 -> {
+                        dividaService.quitarDivida(scanner);
+                    }
                     case 5 -> {
                         clienteService.excluirCliente(scanner);
                     }

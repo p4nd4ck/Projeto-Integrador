@@ -1,14 +1,19 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
+
 public class Quitacao {
-
-
     private int id;
     private double valor;
-    private Date data;
+    private LocalDate data;
     private Cliente cliente;
 
+    public Quitacao(int id, double valor, LocalDate data, Cliente cliente) {
+        this.id = id;
+        this.valor = valor;
+        this.data = data;
+        this.cliente = cliente;
+    }
     
     public int getId() {
         return id;
@@ -34,11 +39,11 @@ public class Quitacao {
         this.valor = valor;
     }
 
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
     }
 }

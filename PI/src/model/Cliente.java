@@ -14,8 +14,7 @@ public class Cliente {
     private double saldoComLoja;  // Novo campo para armazenar saldo com a loja
     private ArrayList<Produto> produtos;
     private ArrayList<String> datasDivida;
-    private ArrayList<Double> valoresQuitados;
-    private ArrayList<String> datasQuitacao;
+    //private ArrayList<Quitacao> quitacoes;
 
     public Cliente(int id, String nome, String contato, String endereco, String cpf, String rg, LocalDate dataNascimento) {
         this.id = id;
@@ -28,9 +27,9 @@ public class Cliente {
         this.produtos = new ArrayList<>();
         this.datasDivida = new ArrayList<>();
         this.divida = 0.0;
-        this.saldoComLoja = 0.0;  // Inicializa o saldo com a loja
-        this.valoresQuitados = new ArrayList<>();
-        this.datasQuitacao = new ArrayList<>();
+        // this.saldoComLoja = 0.0;  // Inicializa o saldo com a loja
+        // this.valoresQuitados = new ArrayList<>();
+        // this.datasQuitacao = new ArrayList<>();
     }
 
     public String getNome() {
@@ -76,8 +75,8 @@ public class Cliente {
         }
 
         if (divida < 0) divida = 0;  // Impede que a dívida seja negativa
-        this.valoresQuitados.add(valor);
-        this.datasQuitacao.add(dataQuitacao);
+        // this.valoresQuitados.add(valor);
+        // this.datasQuitacao.add(dataQuitacao);
     }
 
     public double getDivida() {
@@ -96,13 +95,13 @@ public class Cliente {
         return datasDivida;
     }
 
-    public ArrayList<Double> getValoresQuitados() {
-        return valoresQuitados;
-    }
+    // public ArrayList<Double> getValoresQuitados() {
+    //     return valoresQuitados;
+    // }
 
-    public ArrayList<String> getDatasQuitacao() {
-        return datasQuitacao;
-    }
+    // public ArrayList<String> getDatasQuitacao() {
+    //     return datasQuitacao;
+    // }
 
     public void adicionarDivida(Divida divida2) {
         this.divida += divida2.getValor();
@@ -119,7 +118,7 @@ public class Cliente {
         }
 
         if (divida < 0) divida = 0;  // Impede que a dívida seja negativa
-        this.valoresQuitados.add(valor);
-        this.datasQuitacao.add(quitacao.getData().toString());
+        // this.valoresQuitados.add(valor);
+        // this.datasQuitacao.add(quitacao.getData().toString());
     }
 }

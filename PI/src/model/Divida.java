@@ -1,20 +1,31 @@
 package model;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 public class Divida {
+    private int id;
     private double valor;
-    private String descricao;
-    private Date data;
+    private LocalDate data;
+    private Cliente cliente;
+    private Produto produto;
 
     public Divida() {
         // Construtor padrão
     }
 
-    public Divida(double valor, String descricao, Date data) {
+    public Divida(int id, double valor, LocalDate data, Cliente cliente, Produto produto) {
         this.valor = valor;
-        this.descricao = descricao;
         this.data = data;
+        this.cliente = cliente;
+        this.produto = produto;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public void setId(int id) {
+        this.id = id;
     }
 
     public double getValor() {
@@ -25,27 +36,34 @@ public class Divida {
         this.valor = valor;
     }
 
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
-    public Date getData() {
+    public LocalDate getData() {
         return data;
     }
 
-    public void setData(Date data) {
+    public void setData(LocalDate data) {
         this.data = data;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public Produto getProduto() {
+        return produto;
+    }
+
+    public void setProduto(Produto produto) {
+        this.produto = produto;
     }
 
     @Override
     public String toString() {
         return "Divida{" +
                 "valor=" + valor +
-                ", descricao='" + descricao + '\'' +
                 ", data=" + data +
                 '}';
     }

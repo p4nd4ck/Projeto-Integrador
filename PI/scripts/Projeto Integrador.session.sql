@@ -6,8 +6,8 @@ CREATE DATABASE gestao_dividas;
 USE gestao_dividas;
 
 -- Apagar tabelas caso já existam para evitar erros de duplicação
-DROP TABLE IF EXISTS Quitacao;
-DROP TABLE IF EXISTS Divida;
+DROP TABLE IF EXISTS quitacoes;
+DROP TABLE IF EXISTS dividas;
 DROP TABLE IF EXISTS produtos;
 DROP TABLE IF EXISTS clientes;
 
@@ -19,9 +19,7 @@ CREATE TABLE IF NOT EXISTS clientes (
     endereco VARCHAR(255) NOT NULL,
     cpf VARCHAR(14) NOT NULL,
     rg VARCHAR(20) NOT NULL,
-    data_nascimento DATE NOT NULL,
-    divida DOUBLE DEFAULT 0,
-    saldo_com_loja DOUBLE DEFAULT 0
+    data_nascimento DATE NOT NULL
 );
 
 -- Modificar a coluna 'id' da tabela 'clientes' para garantir AUTO_INCREMENT
@@ -35,7 +33,7 @@ CREATE TABLE IF NOT EXISTS produtos (
 );
 
 -- Criar tabela Divida
-CREATE TABLE IF NOT EXISTS Divida (
+CREATE TABLE IF NOT EXISTS dividas (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT NOT NULL,
     produto_id INT NOT NULL,
@@ -48,7 +46,7 @@ CREATE TABLE IF NOT EXISTS Divida (
 );
 
 -- Criar tabela Quitacao
-CREATE TABLE IF NOT EXISTS Quitacao (
+CREATE TABLE IF NOT EXISTS quitacoes (
     id INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
     cliente_id INT NOT NULL,
     valor DECIMAL(10,2) NOT NULL,
@@ -67,11 +65,11 @@ INSERT INTO produtos (nome, valor)
 VALUES ('Produto A', 10.00);
 
 -- Inserir uma dívida (associada ao cliente e produto cadastrados)
-INSERT INTO Divida (cliente_id, produto_id, data, valor, quitada) 
+INSERT INTO dividas (cliente_id, produto_id, data, valor, quitada) 
 VALUES (1, 1, '2025-01-01', 10.00, 0);
 
 -- Inserir uma quitação para o cliente
-INSERT INTO Quitacao (cliente_id, valor, data) 
+INSERT INTO quitacoes (cliente_id, valor, data) 
 VALUES (1, 10.00, '2025-01-10');
 
 -- Consultas para verificação
@@ -80,21 +78,21 @@ VALUES (1, 10.00, '2025-01-10');
 SELECT * FROM clientes;
 
 -- Selecionar dívidas de um cliente específico pelo nome
-SELECT * FROM Divida WHERE cliente_id = (SELECT id FROM clientes WHERE nome = 'João Silva');
+SELECT * FROM dividas WHERE cliente_id = (SELECT id FROM clientes WHERE nome = 'João Silva');
 
 -- Selecionar quitações de um cliente específico pelo nome
-SELECT * FROM Quitacao WHERE cliente_id = (SELECT id FROM clientes WHERE nome = 'João Silva');
+SELECT * FROM quitacoes WHERE cliente_id = (SELECT id FROM clientes WHERE nome = 'João Silva');
 
 -- Selecionar informações completas de um cliente, incluindo dívidas e quitações pelo nome
 SELECT 
     clientes.nome, 
     clientes.contato, 
     clientes.endereco, 
-    Divida.valor AS valor_divida, 
-    Divida.quitada, 
-    Quitacao.valor AS valor_quitacao, 
-    Quitacao.data AS data_quitacao
+    dividas.valor AS valor_divida, 
+    dividas.quitada, 
+    quitacoes.valor AS valor_quitacao, 
+    quitacoes.data AS data_quitacao
 FROM clientes
-LEFT JOIN Divida ON clientes.id = Divida.cliente_id
-LEFT JOIN Quitacao ON clientes.id = Quitacao.cliente_id
+LEFT JOIN dividas ON clientes.id = Divida.cliente_id
+LEFT JOIN quitacoes ON clientes.id = Quitacao.cliente_id
 WHERE clientes.nome = 'João Silva';
