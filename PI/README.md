@@ -1,4 +1,3 @@
-
 # Sistema de Gestão de Dívidas
 
 Este projeto é um sistema simples de gestão de dívidas de clientes, desenvolvido em Java. O sistema permite cadastrar clientes, adicionar dívidas, quitar dívidas, consultar e excluir clientes, além de gerar um extrato com o histórico de compras e pagamentos.
@@ -24,9 +23,11 @@ O projeto é composto pelos seguintes arquivos:
 ## 🚀 Como Executar o Projeto
 
 ### **Pré-requisitos**
+
 - Java instalado na máquina (versão 8 ou superior).
 
 ### **Passos para Execução**
+
 1. Clone o repositório ou baixe os arquivos.
 2. Compile os arquivos Java:
    ```sh
@@ -64,10 +65,11 @@ O projeto é composto pelos seguintes arquivos:
 
 ## 📸 Screenshots
 *(Em desenvolvimento - Aqui podem ser adicionadas capturas de tela do sistema rodando no terminal.)*
-
 ## 📒 Roadmap
+
 - **Versão 1.0:** Funcionalidades básicas de cadastro e gestão de dívidas.
 - **Versão 2.0:** Implementação de persistência de dados e melhorias na interface.
+- **Versão 3.0:** Versão com interface gráfica e suporte a múltiplos usuários.
 - **Versão 3.0:** Versão com interface gráfica e suporte a múltiplos usuários.
 
 ## 📋 Uso/Exemplos
@@ -101,7 +103,9 @@ MIT License
 Para suporte, entre em contato via [email ou GitHub].
 
 ## 👤 Autores
-Desenvolvido por [Seu Nome]
+Desenvolvido por Aline Fabiana de Almeida Mantovani Cipolla, Everson Bustillos 
+Calizaya, Lucas Henrique Bastos Martins, Luciana Correa Ferreira, Vitor Emanuel de 
+Souza.
 
 ---
 
