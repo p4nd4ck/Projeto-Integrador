@@ -103,9 +103,9 @@ MIT License
 Para suporte, entre em contato via [email ou GitHub].
 
 ## 👤 Autores
-Desenvolvido por Aline Fabiana de Almeida Mantovani Cipolla, Everson Bustillos 
-Calizaya, Lucas Henrique Bastos Martins, Luciana Correa Ferreira, Vitor Emanuel de 
-Souza.
+Desenvolvido por Aline Fabiana de Almeida Mantovani Cipolla RA - 24001670, Everson Bustillos 
+Calizaya RA - 1012023200005, Lucas Henrique Bastos Martins - RA - 24001926, Luciana Correa Ferreira RA - 24001090, Vitor Emanuel de 
+Souza RA - 24002012.
 
 ---
 
